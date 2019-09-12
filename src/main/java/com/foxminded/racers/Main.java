@@ -1,26 +1,19 @@
 package com.foxminded.racers;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        printSortedRacers();
-    }
+    private final static String startPath = "src/main/resources/start.log";
+    private final static String endPath = "src/main/resources/end.log";
+    private final static String abbreviationsPath = "src/main/resources/abbreviations.txt";
 
-    private static void printSortedRacers() {
+    public static void main(String[] args) throws IOException {
+        PrintRacers print = new PrintRacers();
+
         try {
-            List<String> sortedRacers = new SortedRacers().createSortedRacers();
-            int i = 0;
-            for (String racer : sortedRacers) {
-                System.out.println(String.format("%2d. ", ++i) + racer);
-                if (i == 15) {
-                    System.out.println(String.join("", Collections.nCopies(racer.length() + 4, "-")));
-                }
-            }
-        } catch (IOException e) {
+            print.printSortedRacers(new SortedRacers().createSortedRacers(startPath, endPath, abbreviationsPath), 15);
+        } catch (MissingAbbreviationException e) {
             e.printStackTrace();
         }
     }

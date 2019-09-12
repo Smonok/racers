@@ -12,34 +12,48 @@ public class SortedRacers {
 
     private final Map<String, String> racersCarsTime = new HashMap<>();
 
-    public List<String> createSortedRacers() throws IOException {
+    public List<String> createSortedRacers(String startFile, String endFile, String abbreviationsFile)
+            throws IOException, MissingAbbreviationException {
         List<String> sortedRacers = new ArrayList<>();
+        Map<String, String> racersTime = new TimeCalculator().createRacersTime(startFile, endFile);
 
-        createRacersCarsTime("src/main/resources/abbreviations.txt");
-        racersCarsTime.entrySet().stream().sorted(Map.Entry.<String, String>comparingByValue()).forEach(racer -> {
-            sortedRacers.add(racer.getKey() + racer.getValue());
-        });
+        createRacersCarsTime(racersTime, abbreviationsFile);
+        racersCarsTime.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                .forEach(racer -> sortedRacers.add(racer.getKey() + racer.getValue()));
 
         return sortedRacers;
     }
 
-    private void createRacersCarsTime(String abbreviationsFile) throws IOException {
-        Map<String, String> racersTime = new RacersTime().createRacersTime("src/main/resources/start.log",
-                "src/main/resources/end.log");
+    private void createRacersCarsTime(Map<String, String> racersTime, String abbreviationsFile)
+            throws IOException, MissingAbbreviationException {
         List<String> abbreviations = new ArrayList<>(Files.readAllLines(Paths.get(abbreviationsFile)));
 
-        abbreviations.forEach(abbreviation -> {
-            String racer = abbreviation.substring(0, 3);
-            String fullName = abbreviation.substring(4, getSecondUnderscoreIndex(abbreviation));
-            String car = abbreviation.substring(getSecondUnderscoreIndex(abbreviation) + 1);
+        if (abbreviations.size() != racersTime.size()) {
+            throw new MissingAbbreviationException();
+        }
 
-            racersTime.keySet().forEach(name -> {
-                if (name.equals(racer)) {
-                    racersCarsTime.put(String.format("%-" + 20 + "s | %-" + 25 + "s | ", fullName, car),
-                            racersTime.get(name));
-                }
+        abbreviations.forEach(abbreviation -> {
+            String racer = parseRacerAbbreviation(abbreviation);
+            String fullName = parseFullName(abbreviation);
+            String car = parseCarBrand(abbreviation);
+
+            racersTime.keySet().stream().filter(name -> name.equals(racer)).forEach(name -> {
+                racersCarsTime.put(String.format("%-" + 20 + "s | %-" + 25 + "s | ", fullName, car),
+                        racersTime.get(name));
             });
         });
+    }
+
+    private String parseRacerAbbreviation(String abbreviation) {
+        return abbreviation.substring(0, 3);
+    }
+
+    private String parseFullName(String abbreviation) {
+        return abbreviation.substring(4, getSecondUnderscoreIndex(abbreviation));
+    }
+
+    private String parseCarBrand(String abbreviation) {
+        return abbreviation.substring(getSecondUnderscoreIndex(abbreviation) + 1);
     }
 
     private int getSecondUnderscoreIndex(String abbreviation) {
