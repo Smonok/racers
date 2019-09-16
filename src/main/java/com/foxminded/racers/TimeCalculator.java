@@ -13,13 +13,13 @@ public class TimeCalculator {
     private boolean isSecondsNegative;
 
     Map<String, String> createRacersTime(String startFile, String endFile)
-            throws IOException, MissingAbbreviationException {
+            throws IOException, MissingLineException {
         Map<String, String> racersTime = new HashMap<>();
         List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(startFile)));
         List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(endFile)));
 
         if (startLines.size() != endLines.size()) {
-            throw new MissingAbbreviationException();
+            throw new MissingLineException("Missed line in the file");
         }
 
         endLines.forEach(endLine -> {
@@ -49,9 +49,7 @@ public class TimeCalculator {
     private double computeMilliseconds(String startMilliseconds, String endMilliseconds) {
         double milliseconds = Double.valueOf(endMilliseconds) - Double.valueOf(startMilliseconds);
 
-        isMillisecondsNegative = false;
-        isSecondsNegative = false;
-
+        isMillisecondsNegative = false;        
         if (milliseconds < 0) {
             milliseconds += 60;
             isMillisecondsNegative = true;
@@ -63,6 +61,7 @@ public class TimeCalculator {
     private int computeSeconds(String startSeconds, String endSeconds) {
         int seconds = Integer.parseInt(endSeconds) - Integer.parseInt(startSeconds);
 
+        isSecondsNegative = false;        
         if (seconds < 0) {
             seconds += 60;
             isSecondsNegative = true;
