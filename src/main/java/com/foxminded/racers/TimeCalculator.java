@@ -12,29 +12,31 @@ public class TimeCalculator {
     private boolean isMillisecondsNegative;
     private boolean isSecondsNegative;
 
-    Map<String, String> createRacersTime(String startFile, String endFile)
-            throws IOException, MissingLineException {
+    Map<String, String> createRacersTime(String startFile, String endFile) throws IOException, MissingLineException {
         Map<String, String> racersTime = new HashMap<>();
         List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(startFile)));
         List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(endFile)));
 
         if (startLines.size() != endLines.size()) {
-            throw new MissingLineException("Missed line in the file");
+            String fileName = startLines.size() < endLines.size() ? "start.log" : "end.log";
+            throw new MissingLineException("Not enough lines in " + fileName + " file");
         }
 
         endLines.forEach(endLine -> {
             String racer = endLine.substring(0, 3);
             String[] endTime = splitTime(endLine);
 
-            startLines.stream().filter(line -> line.contains(racer)).forEach(startLine -> {
-                String[] startTime = splitTime(startLine);
-                double milliseconds = computeMilliseconds(startTime[2], endTime[2]);
-                int seconds = computeSeconds(startTime[1], endTime[1]);
-                int minutes = computeMinutes(startTime[0], endTime[0]);
-                String bestTime = timeToString(minutes, seconds, milliseconds);
+            startLines.stream()
+                    .filter(line -> line.contains(racer))
+                    .forEach(startLine -> {
+                        String[] startTime = splitTime(startLine);
+                        double milliseconds = computeMilliseconds(startTime[2], endTime[2]);
+                        int seconds = computeSeconds(startTime[1], endTime[1]);
+                        int minutes = computeMinutes(startTime[0], endTime[0]);
+                        String bestTime = timeToString(minutes, seconds, milliseconds);
 
-                racersTime.put(racer, bestTime);
-            });
+                        racersTime.put(racer, bestTime);
+                    });
         });
 
         return racersTime;
@@ -49,7 +51,7 @@ public class TimeCalculator {
     private double computeMilliseconds(String startMilliseconds, String endMilliseconds) {
         double milliseconds = Double.valueOf(endMilliseconds) - Double.valueOf(startMilliseconds);
 
-        isMillisecondsNegative = false;        
+        isMillisecondsNegative = false;
         if (milliseconds < 0) {
             milliseconds += 60;
             isMillisecondsNegative = true;
@@ -61,7 +63,7 @@ public class TimeCalculator {
     private int computeSeconds(String startSeconds, String endSeconds) {
         int seconds = Integer.parseInt(endSeconds) - Integer.parseInt(startSeconds);
 
-        isSecondsNegative = false;        
+        isSecondsNegative = false;
         if (seconds < 0) {
             seconds += 60;
             isSecondsNegative = true;
@@ -88,10 +90,13 @@ public class TimeCalculator {
         StringBuilder time = new StringBuilder();
 
         if (minutes != 0) {
-            time.append(minutes).append(":");
+            time.append(minutes)
+                    .append(":");
         }
 
-        time.append(seconds).append(":").append(String.format("%06.3f", milliseconds));
+        time.append(seconds)
+                .append(":")
+                .append(String.format("%06.3f", milliseconds));
 
         return time.toString();
     }
