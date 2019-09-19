@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RecordsTest {
+class RecordsServiceTest {
     private final String ABBREVIATIONS_PATH = "src/test/resources/abbreviationsTest.txt";
 
     private Map<String, String> sortedRacers;
@@ -33,7 +33,7 @@ class RecordsTest {
     void separateRacersRecordsShouldThrowIOExceptionWhenFileNotFound() {
         String incorrectPath = "start";
 
-        assertThrows(IOException.class, () -> new Records().separateRacersRecords(sortedRacers, 0, incorrectPath));
+        assertThrows(IOException.class, () -> new RecordsService().separateRacersRecords(sortedRacers, 0, incorrectPath));
     }
 
     @Test
@@ -41,14 +41,14 @@ class RecordsTest {
         abbreviationsFileWriter.println("NHR_Nico Hulkenberg_RENAULT");
 
         assertThrows(MissingLineException.class,
-                () -> new Records().separateRacersRecords(sortedRacers, 0, ABBREVIATIONS_PATH));
+                () -> new RecordsService().separateRacersRecords(sortedRacers, 0, ABBREVIATIONS_PATH));
     }
 
     @Test
     void separateRacersRecordsShouldReturnEmptyStringWhenEmptyList() throws IOException {
         int topNumber = 3;
         String expectedResult = "";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -61,7 +61,7 @@ class RecordsTest {
         abbreviationsFileWriter.println("FAM_Fernando Alonso_MCLAREN RENAULT");
 
         String expectedResult = " 1. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -78,7 +78,7 @@ class RecordsTest {
 
         String expectedResult = " 1. Sebastian Vettel     | FERRARI                   | 1:04,415\n"
                 + " 2. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -95,7 +95,7 @@ class RecordsTest {
 
         String expectedResult = " 1. Sebastian Vettel     | FERRARI                   | 1:04,415\n"
                 + " 2. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -113,7 +113,7 @@ class RecordsTest {
         String expectedResult = " 1. Sebastian Vettel     | FERRARI                   | 1:04,415\n"
                 + "---------------------------------------------------------------\n"
                 + " 2. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -131,7 +131,7 @@ class RecordsTest {
         String expectedResult = " 1. Sebastian Vettel     | FERRARI                   | 1:04,415\n"
                 + " 2. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657\n"
                 + "---------------------------------------------------------------";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -152,7 +152,7 @@ class RecordsTest {
                 + " 2. Fernando Alonso      | MCLAREN RENAULT           | 1:12,657\n"
                 + "---------------------------------------------------------------\n"
                 + " 3. Nico Hulkenberg      | RENAULT                   | 1:13,065";
-        String actualResult = new Records().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
+        String actualResult = new RecordsService().separateRacersRecords(sortedRacers, topNumber, ABBREVIATIONS_PATH);
 
         assertEquals(expectedResult, actualResult);
     }

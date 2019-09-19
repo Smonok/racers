@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class Records {
+public class RecordsService {
     private List<String> racersRecords = new ArrayList<>();
     private int count = 0;
 
@@ -40,28 +40,23 @@ public class Records {
         }
 
         sortedRacers.keySet()
-                .forEach(name -> {
-                    abbreviations.stream()
-                            .filter(abbreviation -> abbreviation.contains(name))
-                            .forEach(abbreviation -> racersRecords
-                                    .add(createRecord(abbreviation, sortedRacers.get(name))));
-                });
+                .forEach(name -> abbreviations.stream()
+                        .filter(abbreviation -> abbreviation.contains(name))
+                        .forEach(
+                                abbreviation -> racersRecords.add(createRecord(abbreviation, sortedRacers.get(name)))));
     }
 
     private String createRecord(String abbreviation, String time) {
         String number = String.format("%2d. ", ++count);
-        String parsedFullName = abbreviation.substring(4, indexOfSecondUnderscore(abbreviation));
-        String parsedCarBrand = abbreviation.substring(indexOfSecondUnderscore(abbreviation) + 1);
+        String parsedFullName = abbreviation.substring(4, getSecondUnderscoreIndex(abbreviation));
+        String parsedCarBrand = abbreviation.substring(getSecondUnderscoreIndex(abbreviation) + 1);
         String name = String.format("%-" + 20 + "s | ", parsedFullName);
         String car = String.format("%-" + 25 + "s | ", parsedCarBrand);
 
-        return new StringBuilder(number).append(name)
-                .append(car)
-                .append(time)
-                .toString();
+        return number + name + car + time;
     }
 
-    private int indexOfSecondUnderscore(String abbreviation) {
+    private int getSecondUnderscoreIndex(String abbreviation) {
         return abbreviation.indexOf("_", abbreviation.indexOf("_") + 1);
     }
 }
