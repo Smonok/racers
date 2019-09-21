@@ -12,18 +12,19 @@ public class TimeCalculator {
     private boolean isMillisecondsNegative;
     private boolean isSecondsNegative;
 
-    Map<String, String> createRacersTime(String startFile, String endFile) throws IOException, MissingLineException {
+    Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
         List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(startFile)));
         List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(endFile)));
+        int racerAbbreviationLength = 3;
 
         if (startLines.size() != endLines.size()) {
             String fileName = startLines.size() < endLines.size() ? "start.log" : "end.log";
             throw new MissingLineException("Not enough lines in " + fileName + " file");
         }
-
-        endLines.forEach(endLine -> {
-            String racer = endLine.substring(0, 3);
+        
+        endLines.forEach(endLine -> {            
+            String racer = endLine.substring(0, racerAbbreviationLength);
             String[] endTime = splitTime(endLine);
 
             startLines.stream()
@@ -43,7 +44,8 @@ public class TimeCalculator {
     }
 
     private String[] splitTime(String abbreviation) {
-        String time = abbreviation.substring(14);
+        int firstTimeDigitIndex = 14;
+        String time = abbreviation.substring(firstTimeDigitIndex);
 
         return time.split(":");
     }

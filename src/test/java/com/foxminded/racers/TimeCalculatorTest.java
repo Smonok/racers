@@ -13,17 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TimeCalculatorTest {
-
     private final TimeCalculator racersTime = new TimeCalculator();
-    private final String START_PATH = "src/test/resources/startTest.log";
-    private final String END_PATH = "src/test/resources/endTest.log";
+    private Map<String, String> expectedResult;
     private PrintStream startFileWriter;
     private PrintStream endFileWriter;
 
     @BeforeEach
     void initialize() throws IOException {
-        startFileWriter = new PrintStream(new FileOutputStream(START_PATH));
-        endFileWriter = new PrintStream(new FileOutputStream(END_PATH));
+        startFileWriter = new PrintStream(new FileOutputStream(Constants.START_TEST_PATH));
+        endFileWriter = new PrintStream(new FileOutputStream(Constants.END_TEST_PATH));
+        expectedResult = new HashMap<>();
     }
 
     @AfterEach
@@ -34,49 +33,49 @@ class TimeCalculatorTest {
 
     @Test
     void createRacersTimeShouldThrowIOExceptionWhenFirstFileNotFound() {
-        String incorrectPath = "start";
 
-        assertThrows(IOException.class, () -> racersTime.createRacersTime(incorrectPath, END_PATH));
+        assertThrows(IOException.class,
+                () -> racersTime.createRacersTime(Constants.INCORRECT_PATH, Constants.END_TEST_PATH));
     }
 
     @Test
     void createRacersTimeShouldThrowIOExceptionWhenSecondFileNotFound() {
-        String incorrectPath = "end";
 
-        assertThrows(IOException.class, () -> racersTime.createRacersTime(START_PATH, incorrectPath));
+        assertThrows(IOException.class,
+                () -> racersTime.createRacersTime(Constants.START_TEST_PATH, Constants.INCORRECT_PATH));
     }
 
     @Test
     void createRacersTimeShouldThrowMissingLineExceptionWhenDifferentFileLengths() {
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
 
-        assertThrows(MissingLineException.class, () -> racersTime.createRacersTime(START_PATH, END_PATH));
+        assertThrows(MissingLineException.class,
+                () -> racersTime.createRacersTime(Constants.START_TEST_PATH, Constants.END_TEST_PATH));
     }
 
     @Test
     void createRacersTimeShouldReturnEmptyMapWhenBothFilesEmpty() throws IOException {
-        Map<String, String> expectedResult = new HashMap<>();
-        Map<String, String> actualResult = racersTime.createRacersTime(START_PATH, END_PATH);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_PATH,
+                Constants.END_TEST_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     void createRacersTimeShouldReturnRacerAbbreviationAndBestTimeWhenOneRacerInFiles() throws IOException {
-        Map<String, String> expectedResult = new HashMap<>();
 
         expectedResult.put("FAM", "1:12,657");
         startFileWriter.println("FAM2018-05-24_12:13:04.512");
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
 
-        Map<String, String> actualResult = racersTime.createRacersTime(START_PATH, END_PATH);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_PATH,
+                Constants.END_TEST_PATH);
 
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     void createRacersTimeShouldReturnRacersAbbreviationsAndBestTimeWhenSeveralRacersInFiles() throws IOException {
-        Map<String, String> expectedResult = new HashMap<>();
 
         expectedResult.put("SVF", "1:04,415");
         expectedResult.put("NHR", "1:13,065");
@@ -90,7 +89,8 @@ class TimeCalculatorTest {
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
         endFileWriter.println("NHR2018-05-24_12:04:02.979");
 
-        Map<String, String> actualResult = racersTime.createRacersTime(START_PATH, END_PATH);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_PATH,
+                Constants.END_TEST_PATH);
 
         assertEquals(expectedResult, actualResult);
     }

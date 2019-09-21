@@ -26,11 +26,7 @@ public class RecordsService {
         });
 
         return numeratedRacers.toString();
-    }
-
-    private String createSeparator(int length) {
-        return String.join("", Collections.nCopies(length, "-"));
-    }
+    } 
 
     private void fillRacersRecords(Map<String, String> sortedRacers, String abbreviationsFile) throws IOException {
         List<String> abbreviations = new ArrayList<>(Files.readAllLines(Paths.get(abbreviationsFile)));
@@ -50,13 +46,19 @@ public class RecordsService {
         String number = String.format("%2d. ", ++count);
         String parsedFullName = abbreviation.substring(4, getSecondUnderscoreIndex(abbreviation));
         String parsedCarBrand = abbreviation.substring(getSecondUnderscoreIndex(abbreviation) + 1);
-        String name = String.format("%-" + 20 + "s | ", parsedFullName);
-        String car = String.format("%-" + 25 + "s | ", parsedCarBrand);
+        int maxNameLength = 20;
+        int maxCarBrandLength = 25;
+        String name = String.format("%-" + maxNameLength + "s | ", parsedFullName);
+        String car = String.format("%-" + maxCarBrandLength + "s | ", parsedCarBrand);
 
         return number + name + car + time;
     }
 
     private int getSecondUnderscoreIndex(String abbreviation) {
-        return abbreviation.indexOf("_", abbreviation.indexOf("_") + 1);
+        return abbreviation.indexOf('_', abbreviation.indexOf('_') + 1);
+    }
+    
+    private String createSeparator(int length) {
+        return String.join("", Collections.nCopies(length, "-"));
     }
 }
