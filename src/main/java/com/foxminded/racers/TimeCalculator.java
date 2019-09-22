@@ -1,5 +1,6 @@
 package com.foxminded.racers;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,11 +12,14 @@ import java.util.Map;
 public class TimeCalculator {
     private boolean isMillisecondsNegative;
     private boolean isSecondsNegative;
-
+    private final ClassLoader loader = TimeCalculator.class.getClassLoader();
+    
     Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
-        List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(startFile)));
-        List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(endFile)));
+        File start = new File(loader.getResource(startFile).getFile());  
+        File end = new File(loader.getResource(endFile).getFile());  
+        List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(start.getAbsolutePath())));
+        List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(end.getAbsolutePath())));
         int racerAbbreviationLength = 3;
 
         if (startLines.size() != endLines.size()) {

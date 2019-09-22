@@ -1,5 +1,6 @@
 package com.foxminded.racers;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.StringJoiner;
 
 public class RecordsService {
     private List<String> racersRecords = new ArrayList<>();
+    private final ClassLoader loader = RecordsService.class.getClassLoader();
     private int count = 0;
 
     public String separateRacersRecords(Map<String, String> sortedRacers, int topNumber, String abbreviationsFile)
@@ -26,17 +28,19 @@ public class RecordsService {
         });
 
         return numeratedRacers.toString();
-    } 
+    }
 
     private void fillRacersRecords(Map<String, String> sortedRacers, String abbreviationsFile) throws IOException {
-        List<String> abbreviations = new ArrayList<>(Files.readAllLines(Paths.get(abbreviationsFile)));
-
-        if (abbreviations.size() != sortedRacers.size()) {
+        File abbreviations = new File(loader.getResource(abbreviationsFile)
+                .getFile());
+        List<String> abbreviationsLines = new ArrayList<>(
+                Files.readAllLines(Paths.get(abbreviations.getAbsolutePath())));
+        if (abbreviationsLines.size() != sortedRacers.size()) {
             throw new MissingLineException("Not enough lines in abbreviations.txt file");
         }
 
         sortedRacers.keySet()
-                .forEach(name -> abbreviations.stream()
+                .forEach(name -> abbreviationsLines.stream()
                         .filter(abbreviation -> abbreviation.contains(name))
                         .forEach(
                                 abbreviation -> racersRecords.add(createRecord(abbreviation, sortedRacers.get(name)))));
@@ -57,7 +61,7 @@ public class RecordsService {
     private int getSecondUnderscoreIndex(String abbreviation) {
         return abbreviation.indexOf('_', abbreviation.indexOf('_') + 1);
     }
-    
+
     private String createSeparator(int length) {
         return String.join("", Collections.nCopies(length, "-"));
     }
