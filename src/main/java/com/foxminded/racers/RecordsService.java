@@ -1,9 +1,6 @@
 package com.foxminded.racers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +28,8 @@ public class RecordsService {
     }
 
     private void fillRacersRecords(Map<String, String> sortedRacers, String abbreviationsFile) throws IOException {
-        File abbreviations = new File(loader.getResource(abbreviationsFile)
-                .getFile());
-        List<String> abbreviationsLines = new ArrayList<>(
-                Files.readAllLines(Paths.get(abbreviations.getAbsolutePath())));
+        List<String> abbreviationsLines = InitializerUtil.initializeListFromFile(loader, abbreviationsFile);
+
         if (abbreviationsLines.size() != sortedRacers.size()) {
             throw new MissingLineException("Not enough lines in abbreviations.txt file");
         }
@@ -50,10 +45,8 @@ public class RecordsService {
         String number = String.format("%2d. ", ++count);
         String parsedFullName = abbreviation.substring(4, getSecondUnderscoreIndex(abbreviation));
         String parsedCarBrand = abbreviation.substring(getSecondUnderscoreIndex(abbreviation) + 1);
-        int maxNameLength = 20;
-        int maxCarBrandLength = 25;
-        String name = String.format("%-" + maxNameLength + "s | ", parsedFullName);
-        String car = String.format("%-" + maxCarBrandLength + "s | ", parsedCarBrand);
+        String name = String.format("%-" + Constants.MAX_NAME_LENGTH + "s | ", parsedFullName);
+        String car = String.format("%-" + Constants.MAX_CAR_BRAND_LENGTH + "s | ", parsedCarBrand);
 
         return number + name + car + time;
     }

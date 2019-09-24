@@ -1,6 +1,6 @@
 package com.foxminded.racers;
 
-public class Constants {
+public final class Constants {
 
     private Constants() {
         throw new AssertionError();
@@ -9,8 +9,15 @@ public class Constants {
     public static final String START_FILE_NAME = "start.log";
     public static final String END_FILE_NAME = "end.log";
     public static final String ABBREVIATIONS_FILE_NAME = "abbreviations.txt";
-    public static final String START_TEST_FILE_NAME = "startTest.log";
-    public static final String END_TEST_FILE_NAME = "endTest.log";
-    public static final String ABBREVIATIONS_TEST_FILE_NAME = "abbreviationsTest.txt";
+
+    public static final String START_FILE_NAME_TEST = "startTest.log";
+    public static final String END_FILE_NAME_TEST = "endTest.log";
+    public static final String ABBREVIATIONS_FILE_NAME_TEST = "abbreviationsTest.txt";
     public static final String INCORRECT_NAME = "incorrect.txt";
+
+    public static final int MAX_NAME_LENGTH = 20;
+    public static final int MAX_CAR_BRAND_LENGTH = 25;
+    public static final int RACER_ABBREVIATION_LENGTH = 3;
+    public static final int FIRST_TIME_DIGIT_INDEX = 14;
+    public static final int LACK_TIME = 60;
 }

@@ -1,10 +1,6 @@
 package com.foxminded.racers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,22 +9,19 @@ public class TimeCalculator {
     private boolean isMillisecondsNegative;
     private boolean isSecondsNegative;
     private final ClassLoader loader = TimeCalculator.class.getClassLoader();
-    
+
     Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
-        File start = new File(loader.getResource(startFile).getFile());  
-        File end = new File(loader.getResource(endFile).getFile());  
-        List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(start.getAbsolutePath())));
-        List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(end.getAbsolutePath())));
-        int racerAbbreviationLength = 3;
+        List<String> startLines = InitializerUtil.initializeListFromFile(loader, startFile);
+        List<String> endLines = InitializerUtil.initializeListFromFile(loader, endFile);
 
         if (startLines.size() != endLines.size()) {
             String fileName = startLines.size() < endLines.size() ? "start.log" : "end.log";
             throw new MissingLineException("Not enough lines in " + fileName + " file");
         }
-        
-        endLines.forEach(endLine -> {            
-            String racer = endLine.substring(0, racerAbbreviationLength);
+
+        endLines.forEach(endLine -> {
+            String racer = endLine.substring(0, Constants.RACER_ABBREVIATION_LENGTH);
             String[] endTime = splitTime(endLine);
 
             startLines.stream()
@@ -48,8 +41,7 @@ public class TimeCalculator {
     }
 
     private String[] splitTime(String abbreviation) {
-        int firstTimeDigitIndex = 14;
-        String time = abbreviation.substring(firstTimeDigitIndex);
+        String time = abbreviation.substring(Constants.FIRST_TIME_DIGIT_INDEX);
 
         return time.split(":");
     }
@@ -59,7 +51,7 @@ public class TimeCalculator {
 
         isMillisecondsNegative = false;
         if (milliseconds < 0) {
-            milliseconds += 60;
+            milliseconds += Constants.LACK_TIME;
             isMillisecondsNegative = true;
         }
 
@@ -71,7 +63,7 @@ public class TimeCalculator {
 
         isSecondsNegative = false;
         if (seconds < 0) {
-            seconds += 60;
+            seconds += Constants.LACK_TIME;
             isSecondsNegative = true;
         }
 
@@ -100,10 +92,9 @@ public class TimeCalculator {
                     .append(":");
         }
 
-        time.append(seconds)
+        return time.append(seconds)
                 .append(":")
-                .append(String.format("%06.3f", milliseconds));
-
-        return time.toString();
+                .append(String.format("%06.3f", milliseconds))
+                .toString();
     }
 }

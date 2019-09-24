@@ -2,8 +2,6 @@ package com.foxminded.racers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -18,16 +16,12 @@ class TimeCalculatorTest {
     private Map<String, String> expectedResult;
     private PrintStream startFileWriter;
     private PrintStream endFileWriter;
-    private static final ClassLoader loader = TimeCalculator.class.getClassLoader();
+    private static final ClassLoader loader = TimeCalculatorTest.class.getClassLoader();
 
     @BeforeEach
     void initialize() throws IOException {
-        File startTest = new File(loader.getResource(Constants.START_TEST_FILE_NAME)
-                .getFile());
-        File endTest = new File(loader.getResource(Constants.END_TEST_FILE_NAME)
-                .getFile());
-        startFileWriter = new PrintStream(new FileOutputStream(startTest.getAbsolutePath()));
-        endFileWriter = new PrintStream(new FileOutputStream(endTest.getAbsolutePath()));
+        startFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.START_FILE_NAME_TEST);
+        endFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.END_FILE_NAME_TEST);
         expectedResult = new HashMap<>();
     }
 
@@ -41,14 +35,14 @@ class TimeCalculatorTest {
     void createRacersTimeShouldThrowNullPointerExceptionWhenFirstFileNotFound() {
 
         assertThrows(NullPointerException.class,
-                () -> racersTime.createRacersTime(Constants.INCORRECT_NAME, Constants.END_TEST_FILE_NAME));
+                () -> racersTime.createRacersTime(Constants.INCORRECT_NAME, Constants.END_FILE_NAME_TEST));
     }
 
     @Test
     void createRacersTimeShouldThrowNullPointerExceptionWhenSecondFileNotFound() {
 
         assertThrows(NullPointerException.class,
-                () -> racersTime.createRacersTime(Constants.START_TEST_FILE_NAME, Constants.INCORRECT_NAME));
+                () -> racersTime.createRacersTime(Constants.START_FILE_NAME_TEST, Constants.INCORRECT_NAME));
     }
 
     @Test
@@ -56,13 +50,13 @@ class TimeCalculatorTest {
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
 
         assertThrows(MissingLineException.class,
-                () -> racersTime.createRacersTime(Constants.START_TEST_FILE_NAME, Constants.END_TEST_FILE_NAME));
+                () -> racersTime.createRacersTime(Constants.START_FILE_NAME_TEST, Constants.END_FILE_NAME_TEST));
     }
 
     @Test
     void createRacersTimeShouldReturnEmptyMapWhenBothFilesEmpty() throws IOException {
-        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_FILE_NAME,
-                Constants.END_TEST_FILE_NAME);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_FILE_NAME_TEST,
+                Constants.END_FILE_NAME_TEST);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -74,8 +68,8 @@ class TimeCalculatorTest {
         startFileWriter.println("FAM2018-05-24_12:13:04.512");
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
 
-        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_FILE_NAME,
-                Constants.END_TEST_FILE_NAME);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_FILE_NAME_TEST,
+                Constants.END_FILE_NAME_TEST);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -83,9 +77,7 @@ class TimeCalculatorTest {
     @Test
     void createRacersTimeShouldReturnRacersAbbreviationsAndBestTimeWhenSeveralRacersInFiles() throws IOException {
 
-        expectedResult.put("SVF", "1:04,415");
-        expectedResult.put("NHR", "1:13,065");
-        expectedResult.put("FAM", "1:12,657");
+        InitializerUtil.putThreeRacers(expectedResult);
 
         startFileWriter.println("SVF2018-05-24_12:02:58.917");
         startFileWriter.println("NHR2018-05-24_12:02:49.914");
@@ -95,8 +87,8 @@ class TimeCalculatorTest {
         endFileWriter.println("FAM2018-05-24_12:14:17.169");
         endFileWriter.println("NHR2018-05-24_12:04:02.979");
 
-        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_TEST_FILE_NAME,
-                Constants.END_TEST_FILE_NAME);
+        Map<String, String> actualResult = racersTime.createRacersTime(Constants.START_FILE_NAME_TEST,
+                Constants.END_FILE_NAME_TEST);
 
         assertEquals(expectedResult, actualResult);
     }
