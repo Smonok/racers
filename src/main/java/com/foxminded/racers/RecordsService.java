@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 public class RecordsService {
-    private List<String> racersRecords = new ArrayList<>();
-    private final ClassLoader loader = RecordsService.class.getClassLoader();
+    private List<String> racersRecords = new ArrayList<>();    
     private int count = 0;
 
     public String separateRacersRecords(Map<String, String> sortedRacers, int topNumber, String abbreviationsFile)
@@ -28,10 +27,10 @@ public class RecordsService {
     }
 
     private void fillRacersRecords(Map<String, String> sortedRacers, String abbreviationsFile) throws IOException {
-        List<String> abbreviationsLines = InitializerUtil.initializeListFromFile(loader, abbreviationsFile);
+        List<String> abbreviationsLines = InitializerUtil.initializeListFromFile(abbreviationsFile);
 
         if (abbreviationsLines.size() != sortedRacers.size()) {
-            throw new MissingLineException("Not enough lines in abbreviations.txt file");
+            throw new MissingLineException("Wrong number of lines in" + abbreviationsFile + "file");
         }
 
         sortedRacers.keySet()

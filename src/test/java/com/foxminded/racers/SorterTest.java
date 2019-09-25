@@ -11,16 +11,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SorterTest {
+public class SorterTest {
     private PrintStream startFileWriter;
     private PrintStream endFileWriter;
-    private Map<String, String> expectedResult;
-    private static final ClassLoader loader = SorterTest.class.getClassLoader();
+    private Map<String, String> expectedResult;  
 
     @BeforeEach
     void initialize() throws IOException {
-        startFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.START_FILE_NAME_TEST);
-        endFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.END_FILE_NAME_TEST);
+        startFileWriter = InitializerUtil.initializeFileWriter(Constants.START_FILE_NAME_TEST);
+        endFileWriter = InitializerUtil.initializeFileWriter(Constants.END_FILE_NAME_TEST);
         expectedResult = new LinkedHashMap<>();
     }
 

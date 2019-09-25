@@ -8,16 +8,15 @@ import java.util.Map;
 public class TimeCalculator {
     private boolean isMillisecondsNegative;
     private boolean isSecondsNegative;
-    private final ClassLoader loader = TimeCalculator.class.getClassLoader();
 
     Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
-        List<String> startLines = InitializerUtil.initializeListFromFile(loader, startFile);
-        List<String> endLines = InitializerUtil.initializeListFromFile(loader, endFile);
+        List<String> startLines = InitializerUtil.initializeListFromFile(startFile);
+        List<String> endLines = InitializerUtil.initializeListFromFile(endFile);
 
-        if (startLines.size() != endLines.size()) {
-            String fileName = startLines.size() < endLines.size() ? "start.log" : "end.log";
-            throw new MissingLineException("Not enough lines in " + fileName + " file");
+        if (startLines.size() != endLines.size()) {            
+            throw new MissingLineException("Not corresponding lines in files " + startFile + " and " + endFile
+                    + ". The amount of lines should be equal");
         }
 
         endLines.forEach(endLine -> {
@@ -41,7 +40,7 @@ public class TimeCalculator {
     }
 
     private String[] splitTime(String abbreviation) {
-        String time = abbreviation.substring(Constants.FIRST_TIME_DIGIT_INDEX);
+        String time = abbreviation.substring(Constants.BEGIN_TIME_INDEX);
 
         return time.split(":");
     }
@@ -51,7 +50,7 @@ public class TimeCalculator {
 
         isMillisecondsNegative = false;
         if (milliseconds < 0) {
-            milliseconds += Constants.LACK_TIME;
+            milliseconds += Constants.MISSING_TIME;
             isMillisecondsNegative = true;
         }
 
@@ -63,7 +62,7 @@ public class TimeCalculator {
 
         isSecondsNegative = false;
         if (seconds < 0) {
-            seconds += Constants.LACK_TIME;
+            seconds += Constants.MISSING_TIME;
             isSecondsNegative = true;
         }
 

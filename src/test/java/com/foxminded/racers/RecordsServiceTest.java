@@ -11,14 +11,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RecordsServiceTest {
+public class RecordsServiceTest {
     private Map<String, String> sortedRacers;
-    private PrintStream abbreviationsFileWriter;
-    private final ClassLoader loader = RecordsServiceTest.class.getClassLoader();
+    private PrintStream abbreviationsFileWriter;  
 
     @BeforeEach
     void initialize() throws IOException {
-        abbreviationsFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.ABBREVIATIONS_FILE_NAME_TEST);
+        abbreviationsFileWriter = InitializerUtil.initializeFileWriter(Constants.ABBREVIATIONS_FILE_NAME_TEST);
         sortedRacers = new LinkedHashMap<>();
     }
 

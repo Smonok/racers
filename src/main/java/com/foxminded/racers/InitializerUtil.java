@@ -12,22 +12,22 @@ import java.util.Map;
 import java.util.Objects;
 
 public class InitializerUtil {
+    private final static ClassLoader loader = InitializerUtil.class.getClassLoader();
 
-    public static PrintStream initializeFileWriter(ClassLoader loader, String fileName) throws IOException {
-        File file = initializeFile(loader, fileName);
+    public static PrintStream initializeFileWriter(String fileName) throws IOException {
+        File file = initializeFile(fileName);
 
         return new PrintStream(new FileOutputStream(file.getAbsolutePath()));
     }
 
-    public static List<String> initializeListFromFile(ClassLoader loader, String fileName) throws IOException {
-        File file = initializeFile(loader, fileName);
+    public static List<String> initializeListFromFile(String fileName) throws IOException {
+        File file = initializeFile(fileName);
 
         return new ArrayList<>(Files.readAllLines(Paths.get(file.getAbsolutePath())));
     }
 
-    private static File initializeFile(ClassLoader loader, String fileName) {
-        return Objects.requireNonNull(new File(loader.getResource(fileName)
-                .getFile()));
+    private static File initializeFile(String fileName) {
+        return new File(Objects.requireNonNull(loader.getResource(fileName).getFile()));
     }
 
     public static void putThreeRacers(Map<String, String> racers) {

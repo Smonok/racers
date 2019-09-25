@@ -11,17 +11,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class TimeCalculatorTest {
+public class TimeCalculatorTest {
     private static final TimeCalculator racersTime = new TimeCalculator();
     private Map<String, String> expectedResult;
     private PrintStream startFileWriter;
-    private PrintStream endFileWriter;
-    private static final ClassLoader loader = TimeCalculatorTest.class.getClassLoader();
+    private PrintStream endFileWriter;    
 
     @BeforeEach
     void initialize() throws IOException {
-        startFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.START_FILE_NAME_TEST);
-        endFileWriter = InitializerUtil.initializeFileWriter(loader, Constants.END_FILE_NAME_TEST);
+        startFileWriter = InitializerUtil.initializeFileWriter(Constants.START_FILE_NAME_TEST);
+        endFileWriter = InitializerUtil.initializeFileWriter(Constants.END_FILE_NAME_TEST);
         expectedResult = new HashMap<>();
     }
 
