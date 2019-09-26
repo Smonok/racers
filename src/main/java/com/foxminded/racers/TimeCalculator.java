@@ -50,7 +50,7 @@ public class TimeCalculator {
 
         isMillisecondsNegative = false;
         if (milliseconds < 0) {
-            milliseconds += Constants.MISSING_TIME;
+            milliseconds += 60;
             isMillisecondsNegative = true;
         }
 
@@ -62,7 +62,7 @@ public class TimeCalculator {
 
         isSecondsNegative = false;
         if (seconds < 0) {
-            seconds += Constants.MISSING_TIME;
+            seconds += 60;
             isSecondsNegative = true;
         }
 

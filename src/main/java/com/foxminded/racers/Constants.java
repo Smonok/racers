@@ -18,6 +18,5 @@ public final class Constants {
     public static final int MAX_NAME_LENGTH = 20;
     public static final int MAX_CAR_BRAND_LENGTH = 25;
     public static final int RACER_ABBREVIATION_LENGTH = 3;
-    public static final int BEGIN_TIME_INDEX = 14;
-    public static final int MISSING_TIME = 60;
+    public static final int BEGIN_TIME_INDEX = 14;    
 }

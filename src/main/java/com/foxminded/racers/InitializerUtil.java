@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,7 +28,9 @@ public class InitializerUtil {
     }
 
     private static File initializeFile(String fileName) {
-        return new File(Objects.requireNonNull(loader.getResource(fileName).getFile()));
+        URL url = Objects.requireNonNull(loader.getResource(fileName));
+              
+        return new File(url.getFile());
     }
 
     public static void putThreeRacers(Map<String, String> racers) {
