@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 public class RecordsService {
-    private List<String> racersRecords = new ArrayList<>();    
+    private List<String> racersRecords = new ArrayList<>();
     private int count = 0;
 
     public String separateRacersRecords(Map<String, String> sortedRacers, int topNumber, String abbreviationsFile)

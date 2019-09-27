@@ -1,99 +1,59 @@
 package com.foxminded.racers;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TimeCalculator {
-    private boolean isMillisecondsNegative;
-    private boolean isSecondsNegative;
+    private final SimpleDateFormat format = new SimpleDateFormat(Constants.TIME_FORMAT);
 
     Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
         List<String> startLines = InitializerUtil.initializeListFromFile(startFile);
         List<String> endLines = InitializerUtil.initializeListFromFile(endFile);
 
-        if (startLines.size() != endLines.size()) {            
+        if (startLines.size() != endLines.size()) {
             throw new MissingLineException("Not corresponding lines in files " + startFile + " and " + endFile
                     + ". The amount of lines should be equal");
         }
 
         endLines.forEach(endLine -> {
             String racer = endLine.substring(0, Constants.RACER_ABBREVIATION_LENGTH);
-            String[] endTime = splitTime(endLine);
+            Date endTime = parseTime(endLine);
 
             startLines.stream()
                     .filter(line -> line.contains(racer))
                     .forEach(startLine -> {
-                        String[] startTime = splitTime(startLine);
-                        double milliseconds = computeMilliseconds(startTime[2], endTime[2]);
-                        int seconds = computeSeconds(startTime[1], endTime[1]);
-                        int minutes = computeMinutes(startTime[0], endTime[0]);
-                        String bestTime = timeToString(minutes, seconds, milliseconds);
+                        Date startTime = parseTime(startLine);
+                        long bestTime = endTime.getTime() - startTime.getTime();
 
-                        racersTime.put(racer, bestTime);
+                        racersTime.put(racer, timeToString(bestTime));
                     });
         });
 
         return racersTime;
     }
 
-    private String[] splitTime(String abbreviation) {
-        String time = abbreviation.substring(Constants.BEGIN_TIME_INDEX);
+    private Date parseTime(String abbreviation) {
+        Date time = null;
 
-        return time.split(":");
+        try {
+            time = format.parse(abbreviation.substring(Constants.BEGIN_TIME_INDEX));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return time;
     }
 
-    private double computeMilliseconds(String startMilliseconds, String endMilliseconds) {
-        double milliseconds = Double.valueOf(endMilliseconds) - Double.valueOf(startMilliseconds);
+    private String timeToString(long milliseconds) {
+        long minutes = (milliseconds / 1000) / 60;
+        double seconds = (milliseconds / 1000.0) % 60;
 
-        isMillisecondsNegative = false;
-        if (milliseconds < 0) {
-            milliseconds += 60;
-            isMillisecondsNegative = true;
-        }
-
-        return milliseconds;
-    }
-
-    private int computeSeconds(String startSeconds, String endSeconds) {
-        int seconds = Integer.parseInt(endSeconds) - Integer.parseInt(startSeconds);
-
-        isSecondsNegative = false;
-        if (seconds < 0) {
-            seconds += 60;
-            isSecondsNegative = true;
-        }
-
-        if (isMillisecondsNegative) {
-            seconds--;
-        }
-
-        return seconds;
-    }
-
-    private int computeMinutes(String startMinutes, String endMinutes) {
-        int minutes = Integer.parseInt(endMinutes) - Integer.parseInt(startMinutes);
-
-        if (isSecondsNegative) {
-            minutes--;
-        }
-
-        return minutes;
-    }
-
-    private String timeToString(int minutes, int seconds, double milliseconds) {
-        StringBuilder time = new StringBuilder();
-
-        if (minutes != 0) {
-            time.append(minutes)
-                    .append(":");
-        }
-
-        return time.append(seconds)
-                .append(":")
-                .append(String.format("%06.3f", milliseconds))
-                .toString();
+        return String.format("%d:%06.3f", minutes, seconds);
     }
 }
