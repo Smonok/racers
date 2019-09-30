@@ -44,7 +44,6 @@ public class TimeCalculator {
     }
 
     private LocalTime parseTime(String abbreviation) {
-
         return LocalTime.parse(abbreviation.substring(Constants.BEGIN_TIME_INDEX));
     }
 

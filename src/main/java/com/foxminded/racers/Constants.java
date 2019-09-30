@@ -5,8 +5,6 @@ public final class Constants {
     public static final String END_FILE_NAME = "end.log";
     public static final String ABBREVIATIONS_FILE_NAME = "abbreviations.txt";
 
-    public static final String TIME_FORMAT = "HH:mm:ss.SSS";
-
     public static final int MAX_NAME_LENGTH = 20;
     public static final int MAX_CAR_BRAND_LENGTH = 25;
     public static final int RACER_ABBREVIATION_LENGTH = 3;
