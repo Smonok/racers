@@ -1,6 +1,9 @@
 package com.foxminded.racers;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +30,9 @@ public class RecordsService {
     }
 
     private void fillRacersRecords(Map<String, String> sortedRacers, String abbreviationsFile) throws IOException {
-        List<String> abbreviationsLines = InitializerUtil.initializeListFromFile(abbreviationsFile);
+        File abbreviations = InitializerUtil.initializeFile(abbreviationsFile);
+        List<String> abbreviationsLines = new ArrayList<>(
+                Files.readAllLines(Paths.get(abbreviations.getAbsolutePath())));
 
         if (abbreviationsLines.size() != sortedRacers.size()) {
             throw new MissingLineException("Wrong number of lines in" + abbreviationsFile + "file");

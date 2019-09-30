@@ -1,20 +1,25 @@
 package com.foxminded.racers;
 
+import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TimeCalculator {
-    private final SimpleDateFormat format = new SimpleDateFormat(Constants.TIME_FORMAT);
 
     Map<String, String> createRacersTime(String startFile, String endFile) throws IOException {
         Map<String, String> racersTime = new HashMap<>();
-        List<String> startLines = InitializerUtil.initializeListFromFile(startFile);
-        List<String> endLines = InitializerUtil.initializeListFromFile(endFile);
+
+        File start = InitializerUtil.initializeFile(startFile);
+        File end = InitializerUtil.initializeFile(endFile);
+        List<String> startLines = new ArrayList<>(Files.readAllLines(Paths.get(start.getAbsolutePath())));
+        List<String> endLines = new ArrayList<>(Files.readAllLines(Paths.get(end.getAbsolutePath())));
 
         if (startLines.size() != endLines.size()) {
             throw new MissingLineException("Not corresponding lines in files " + startFile + " and " + endFile
@@ -23,13 +28,13 @@ public class TimeCalculator {
 
         endLines.forEach(endLine -> {
             String racer = endLine.substring(0, Constants.RACER_ABBREVIATION_LENGTH);
-            Date endTime = parseTime(endLine);
+            LocalTime endTime = parseTime(endLine);
 
             startLines.stream()
                     .filter(line -> line.contains(racer))
                     .forEach(startLine -> {
-                        Date startTime = parseTime(startLine);
-                        long bestTime = endTime.getTime() - startTime.getTime();
+                        LocalTime startTime = parseTime(startLine);
+                        long bestTime = ChronoUnit.MILLIS.between(startTime, endTime);
 
                         racersTime.put(racer, timeToString(bestTime));
                     });
@@ -38,16 +43,9 @@ public class TimeCalculator {
         return racersTime;
     }
 
-    private Date parseTime(String abbreviation) {
-        Date time = null;
+    private LocalTime parseTime(String abbreviation) {
 
-        try {
-            time = format.parse(abbreviation.substring(Constants.BEGIN_TIME_INDEX));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return time;
+        return LocalTime.parse(abbreviation.substring(Constants.BEGIN_TIME_INDEX));
     }
 
     private String timeToString(long milliseconds) {

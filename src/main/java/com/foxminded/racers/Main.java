@@ -1,11 +1,10 @@
 package com.foxminded.racers;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException {
         RecordsService records = new RecordsService();
 
         System.out.println(records.separateRacersRecords(new Sorter().sortRacers(Constants.START_FILE_NAME,
